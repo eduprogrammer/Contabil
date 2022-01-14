@@ -214,7 +214,7 @@ class Contabil {
             impostos_perc : p_interest,
             valor_a_pagar : liquido,
             cpp_inss : cpp,
-            custo_pj : total_company
+            custo_pj : parseFloat(total_company.toFixed(2))
         }
 
         resultCallBack(final_res);        
