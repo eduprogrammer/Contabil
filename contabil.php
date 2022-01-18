@@ -47,11 +47,15 @@
         $child = $pattern['dependentes'];
         $money = $pattern['recebido'];        
 
-        if(strcmp($pref,"no") == 0) {
+        $pref = strtolower($pref);
+
+        
+
+        if(strcmp($pref,"nao") == 0) {
             $iss_res = (($iss * $price) / 100);
             $iss_res = number_format((float)$iss_res, 2, '.','');
             $iss_base = "Art. 1, 'caput'; 8,II; 8-A, 'caput' da Lei 116/2003";
-        } elseif(strcmp($pref,"yes") == 0){
+        } elseif(strcmp($pref,"sim") == 0){
             $iss_res = (int) 0;
             $iss_base = "Não há retenção do ISSQN, pois o prestador tem cadastro na prefeitura e efetua seu recolhimento anualmente.";
         }
