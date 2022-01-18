@@ -104,7 +104,7 @@
                     </p>
 
                     <p>
-                        iss=x&prefeitura=x&valor=x&recebido=x
+                        iss=x&prefeitura=x&valor=x&recebido=x&dependentes=x
                     </p>
 
                     <p>
@@ -115,12 +115,13 @@
                             para iss, x é um número de 2 a 5;<br>
                             para prefeitura, x é a palavra "sim" ou "não";<br>
                             para valor, x é o valor cheio do serviço;<br>
-                            para recebido, x é o valor de RPA que o autônomo já recebeu no mês.<br><br>
+                            para recebido, x é o valor de RPA que o autônomo já recebeu no mês.<br>
+                            para dependentes, x é o número de dependentes que o autônomo afirmou ter<br><br>
 
                             Veja o seguinte exemplo para um RPA em que o autônomo cobrou R$ 3.561,25, não possui
-                            cadastro na Prefeitura e não recebeu nenhum valor de RPA no mês, com ISS de 4%.<br><br>
+                            cadastro na Prefeitura e não recebeu nenhum valor de RPA no mês, com ISS de 4% e 2 dependentes.<br><br>
 
-                            https://eduardoprogramador.com/php/rpa_api.php?<strong>iss=4&prefeitura=nao&valor=3561.25&recebido=0</strong>
+                            https://eduardoprogramador.com/php/rpa_api.php?<strong>iss=4&prefeitura=nao&valor=3561.25&recebido=0&dependentes=2</strong>
 
                     </p>
 
