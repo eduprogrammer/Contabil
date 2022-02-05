@@ -1,19 +1,9 @@
 /*
-    Important: For Brazilians only...
-
     Copyright 2021. Eduardo Programador
     www.eduardoprogramador.com
     consultoria@eduardoprogramador.com
     
-    Todos os direitos reservados.
-
-
-    >>>>>>>>>>>>>>>>>>>> Observação: Se for utilizar a bibioteca contabil.js,
-                        inclua o cabeçalho de Copyright acima. O não atendimento 
-                        do disposto acima acarretará nas medidas de proteção a 
-                        direitos autorais / intelectuais.
-    <<<<<<<<<<<<<<<<<<<<<                        
-
+    Todos os direitos reservados.                
 
     Classe que contém funções de Contabilidade 
     para utilização em códigos Javascript.
@@ -21,48 +11,16 @@
     o script seguirá sendo atualizado.
 
     Confira a lista de funções atualizada em 10/01/2021
+    
 
     1) rpaCalculator: Calcula o valor líquido e as retenções tributárias 
         no RPA (Recibo de Pagamento de Autônomo), que é o documento tributário 
         para registro dos serviços prestados por pessoa física.
 
-        Parâmetros:
+    2) in1234: Calcula todas as retenções tributárias de acordo 
+                com a IN 1.234/2012 da RFB.
 
-            a) rpaData: as propriedas do RPA em formato JSON.
-                Ex.: let pattern = {
-                        prefeitura : "no",
-                        iss : 5,
-                        valor : 1000,
-                        dependentes : 0,
-                        rpa_received : 0
-                    }
-
-            b) resultCallback: Uma função que será executada ao término no cálculo,
-                    tendo como parâmetro o cálculos retornados em JSON.
-                
-            c) Exemplo prático de uso da função:
-                    const res = ct.rpaCalculator(pattern, function (obj) {
-    
-                        var iss = obj.iss_valor ;
-                        var iss_p = obj.iss_perc;
-                        var inss_b = obj.iss_legal;
-                        var inss_v = obj.inss_valor;
-                        var inss_p = obj.inss_perc;
-                        var inss_l = obj.inss_legal;
-                        var irrf_v = obj.irrf_valor;
-                        var irrf_p = obj.irrf_perc;
-                        var irrf_l = obj.irrf_legal;
-                        var = irrf_b = obj.base_irrf;
-                        var ali_rir = obj.aliquota_rir;
-                        var ali_rir_v = obj.aliquota_rir_valor;
-                        var ded_dep = obj.deducao_dependentes;
-                        var ded_rir = obj.deducao_rir;
-                        var imp_p = obj.impostos_perc;
-                        var val = obj.valor_a_pagar;
-                        var cpp = obj.cpp_inss;
-                        var custo = obj.custo_pj;
-                    }
-                });
+              
 
     Tutorial:
 
@@ -74,6 +32,8 @@
 
         c) Pronto, basta agora invocar as funções.
             Ex.: contabilidade.rpaCalculator();
+
+        2) in1234: 
 
 */
 
@@ -88,7 +48,21 @@ class Contabil {
     
     /*
         Função que calcula o RPA.
-        Documentação no cabeçalho do código.
+        Exemplo no cabeçalho do código.
+
+         Parâmetros:
+
+            a) rpaData: as propriedas do RPA em formato JSON.
+                Ex.: let pattern = {
+                        prefeitura : "no",
+                        iss : 5,
+                        valor : 1000,
+                        dependentes : 0,
+                        rpa_received : 0
+                    }
+
+            b) resultCallback: Uma função que será executada ao término no cálculo,
+                    tendo como parâmetro o cálculos retornados em JSON.
     */
     rpaCalculator(rpaData, resultCallBack) {
 
@@ -218,6 +192,152 @@ class Contabil {
         }
 
         resultCallBack(final_res);        
+
+    }
+
+    /*
+        Função que calcula as retenções de acordo com a IN 1.234/2021.
+
+        Parâmetros:
+
+        a) inData: Objeto no formato JSON com as seguintes propriedas.
+            Ex.:
+                let in = {
+                    "nota_fiscal" : 2343.34, << Valor da Nota 
+                    "tipo" : 1, << 0 - Material | 1 - Serviço
+                    "iss" : 5, << - Porcentagem ISS
+                    "codigo_receita" : 6147 << Código Anexo I - IN 1.234/2012
+                };
+
+        b) resultCallBack: Função que executará a saída dos dados. 
+                Ex.:
+                    const contabil = new Contabil();
+                    contabil.in1234(in,function(data){
+                        let iss = data.iss;
+                        let nf = data.nota_fiscal;
+                        (...)
+                    };)
+    */
+    in1234(inData,resultCallBack) {
+        var nf, type, iss, orderTable;                
+        var ir, csll,cofins,pis,code;
+        var liquido;
+        var code, impostos;
+
+        nf = inData.nota_fiscal;
+        type = inData.tipo;        
+        orderTable = inData.codigo_receita;
+
+        switch (type) {
+            case 0:
+                iss = 0;
+                break;
+        
+            default:
+                iss = inData.iss;
+                break;
+        }
+
+        switch (orderTable) {
+            case 6147:
+                ir = 1.2;
+                csll = 1;
+                cofins = 3;
+                pis = 0.65;
+                code = 6147;
+                break;
+
+            case 9060:
+                ir = 0.24;
+                csll = 1;
+                cofins = 3;
+                pis = 0.65;
+                code = 9060;
+                break;
+                
+            case 8739:
+                ir = 0.24;
+                csll = 1;
+                cofins = 0;
+                pis = 0;
+                code = 8739;
+
+            case 8767:
+                ir = 1.2;
+                csll = 1;
+                cofins = 0;
+                pis = 0;
+                code = 8767;
+                break;
+
+            case 6175:
+                ir = 2.4;
+                csll = 1;
+                cofins = 3;
+                pis = 0.65;
+                code = 6175;
+                break;
+
+            case 8850:
+                ir = 2.4;
+                csll = 1;
+                cofins = 0;
+                pis = 0;
+                code = 8850;
+                break;
+
+            case 8863:
+                ir = 0;
+                csll = 1;
+                cofins = 3;
+                pis = 0.65;
+                code = 8863;
+                break;
+
+            case 6188:
+                ir = 2.4;
+                csll = 1;
+                cofins = 3;
+                pis = 0.65;
+                code = 6188;
+                break;
+
+            case 6190:
+                ir = 4.8;
+                csll = 1;
+                cofins = 3;
+                pis = 0.65;
+                code = 6190;
+                break;                    
+
+            default:
+                ir = 1.2;
+                csll = 1;
+                cofins = 3;
+                pis = 0.65;
+                code = 6147;
+                break;
+        }
+
+        var totalAliq = parseFloat(ir) + parseFloat(csll) + parseFloat(cofins) + parseFloat(pis);
+
+        impostos = parseFloat(((totalAliq * nf)/100)) + parseFloat(((iss * nf)/100));
+        liquido = nf - impostos;
+
+        var obj_response = {
+            "valor_nf" : nf,
+            "valor_iss" : (iss * nf)/100,
+            "valor_ir" : (ir * nf)/100,
+            "valor_csll" : (csll * nf)/100,
+            "valor_cofins" : (cofins * nf)/100,
+            "valor_pis" : (pis * nf)/100,
+            "valor_liquido" : liquido,
+            "aliquota" : totalAliq,
+            "valor_impostos" : impostos,
+            "base_legal" : "IN 1.234/2012 (RFB)"            
+        }        
+
+        resultCallBack(obj_response);
 
     }
 
